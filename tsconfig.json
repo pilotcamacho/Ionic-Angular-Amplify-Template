@@ -21,7 +21,10 @@
     "lib": ["es2018", "dom"],
     "useDefineForClassFields": false,
     "resolveJsonModule": true,
-    "allowSyntheticDefaultImports": true
+    "allowSyntheticDefaultImports": true,
+    "esModuleInterop": true,
+    "skipLibCheck": true // This can help ignore type errors in third-party libraries
+  
   },
   "angularCompilerOptions": {
     "enableI18nLegacyMessageIdFormat": false,

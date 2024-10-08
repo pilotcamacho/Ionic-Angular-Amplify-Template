@@ -1,18 +1,40 @@
 import { type ClientSchema, a, defineData } from '@aws-amplify/backend';
 
-/*== STEP 1 ===============================================================
-The section below creates a Todo database table with a "content" field. Try
-adding a new "isDone" field as a boolean. The authorization rule below
-specifies that any user authenticated via an API key can "create", "read",
-"update", and "delete" any "Todo" records.
-=========================================================================*/
 const schema = a.schema({
-  Todo: a
+  Area: a
     .model({
-      content: a.string(),
+      areaDescription: a.string(),
+      areaImage: a.string(),
+      areaName: a.string(),
+      retos: a.hasMany('Reto', 'areaId')
     })
-    .authorization((allow) => [allow.owner()]),
-});
+    .authorization((allow) => [allow.authenticated()]),
+  Reto: a
+    .model({
+      areaID: a.string(),
+      retoName: a.string(),
+      retoDescription: a.string(),
+      area: a.belongsTo('Area','areaId'),
+      evaluations: a.hasMany('RetoHasEvaluation', 'retoId'),
+    })
+    .authorization((allow) => [allow.authenticated()]),
+  RetoHasEvaluation: a
+    .model({
+      evaluationId: a.string(),
+      retoId: a.string(),
+      reto: a.belongsTo('Reto', 'retoId'),
+      evaluation: a.belongsTo('Evaluation', 'evaluationId'),
+    })
+    .authorization((allow) => [allow.authenticated()]),
+  Evaluation: a
+    .model({
+      evaluationQuestionClassName: a.string(),
+      evaluationQuestionParameters: a.json(),
+      evaluationMsResponseTimeGoal: a.integer(),
+      retos: a.hasMany('RetoHasEvaluation', 'evaluationId')
+    })
+    .authorization((allow) => [allow.authenticated()])
+  });
 
 export type Schema = ClientSchema<typeof schema>;
 

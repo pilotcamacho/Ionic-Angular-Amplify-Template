@@ -17,13 +17,52 @@
 
     <!-- <h1>Hello {{user?.signInDetails?.loginId}}'s todos</h1> -->
 
-    <h1>My todos</h1>
-    <button (click)="createTodo()">+ new</button>
-    <ul>
-        <li *ngFor="let todo of todos;"  (click)="deleteTodo(todo.id)">
-            {{ todo.content }}
-        </li>
-    </ul>
+<!-- Area -->
+    <ion-grid>
+      <ion-row>
+        <ion-col size="6">
+          <h1>Areas</h1>
+          <ion-button (click)="createArea()" fill="solid">
+            + new Area
+          </ion-button>
+          <ion-list>
+            <ion-item *ngFor="let area of areas;" (click)="deleteArea(area.id)">
+              {{ area.areaName }}
+            </ion-item>
+          </ion-list>
+        </ion-col>
+
+<!-- Retos -->
+        <ion-col size="6">
+          <h1>Retos</h1>  
+          <ion-item>
+            <ion-label>Name: </ion-label>
+            <ion-input [(ngModel)]="retoName"></ion-input>
+          </ion-item>
+          <ion-item>
+            <ion-label>Description: </ion-label>
+            <ion-input [(ngModel)]="retoDescription"></ion-input>
+          </ion-item>
+          <ion-item>
+            <ion-label>Area</ion-label>
+            <ion-select [(ngModel)]="selectedArea" (ionChange)="onSelectChange($event)">
+              <ion-select-option *ngFor="let area of areas;" [value]="area">{{ area.areaName }}</ion-select-option>
+            </ion-select>
+          </ion-item>
+          <ion-button (click)="createReto()" fill="solid">
+            + new Reto
+          </ion-button>
+          <ion-list>
+            <ion-item *ngFor="let reto of retos;" (click)="deleteReto(reto.id)">
+              {{ reto.retoName }}
+            </ion-item>
+          </ion-list>
+        </ion-col>
+      </ion-row>
+    </ion-grid>
+
+
+
     <!-- <div>
         🥳 App successfully hosted. Try creating a new todo.
         <br />

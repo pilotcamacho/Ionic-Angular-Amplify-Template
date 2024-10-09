@@ -1,9 +1,11 @@
 import { NgFor, CommonModule } from '@angular/common';
 import { Component, OnInit } from '@angular/core';
-import { IonHeader, IonToolbar, IonTitle, IonContent, IonButton } from '@ionic/angular/standalone';
+import { IonHeader, IonToolbar, IonTitle, IonContent, IonButton, IonLabel, IonList, IonItem, IonGrid, IonRow, IonCol, IonInput, IonSelectOption } from '@ionic/angular/standalone';
 
 import { generateClient } from 'aws-amplify/data';
 import type { Schema } from '../../../amplify/data/resource';
+import { IonicModule } from '@ionic/angular'; // Import IonicModule
+import { FormsModule } from '@angular/forms';
 
 const client = generateClient<Schema>();
 
@@ -13,7 +15,8 @@ const client = generateClient<Schema>();
   templateUrl: 'home.page.html',
   styleUrls: ['home.page.scss'],
   standalone: true,
-  imports: [IonButton, IonHeader, IonToolbar, IonTitle, IonContent, NgFor, CommonModule],
+  imports: [IonInput, IonGrid, IonRow, IonCol, IonItem, IonList, IonLabel, IonButton, IonHeader, IonToolbar, IonTitle, IonContent, NgFor,
+    CommonModule, FormsModule, IonSelectOption],
 })
 export class HomePage implements OnInit {
   constructor() { }
@@ -22,17 +25,24 @@ export class HomePage implements OnInit {
     console.log('signOut')
   }
 
-  todos: any[] = [];
+  areas: any[] = [];
+  retos: any[] = [];
+
+  retoName: string = '';
+  retoDescription: string = '';
+  selectedArea: any;
 
   ngOnInit(): void {
-    this.listTodos();
+    this.listAreas();
+    this.listRetos();
   }
 
-  listTodos() {
+  listAreas() {
     try {
-      client.models.Todo.observeQuery().subscribe({
+      client.models.Area.observeQuery().subscribe({
         next: ({ items, isSynced }) => {
-          this.todos = items;
+          console.log('areas', items);
+          this.areas = items;
         },
       });
     } catch (error) {
@@ -40,20 +50,58 @@ export class HomePage implements OnInit {
     }
   }
 
-  createTodo() {
+  createArea() {
     try {
-      client.models.Todo.create({
-        content: window.prompt('Todo content'),
+      client.models.Area.create({
+        areaName: window.prompt('Todo content'),
       });
-      this.listTodos();
+      this.listAreas();
     } catch (error) {
       console.error('error creating todos', error);
     }
   }
-  
-  deleteTodo(id: string) {
-    client.models.Todo.delete({ id })
+
+  deleteArea(id: string) {
+    client.models.Area.delete({ id })
   }
+
+
+
+  listRetos() {
+    try {
+      client.models.Reto.observeQuery().subscribe({
+        next: ({ items, isSynced }) => {
+          console.log('retos', items);
+          this.retos = items;
+        },
+      });
+    } catch (error) {
+      console.error('error fetching todos', error);
+    }
+  }
+
+  createReto() {
+    try {
+      client.models.Reto.create({
+        retoName: this.retoName,
+        retoDescription: this.retoDescription,
+        areaId: this.areas[0].id,
+      });
+      this.listRetos();
+    } catch (error) {
+      console.error('error creating todos', error);
+    }
+  }
+
+  deleteReto(id: string) {
+    client.models.Reto.delete({ id })
+  }
+
+
+  onSelectChange(event: any) {
+    console.log('Selected fruit:', event.detail.value);
+  }
+
 
 
 }

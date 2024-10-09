@@ -11,17 +11,17 @@ const schema = a.schema({
     .authorization((allow) => [allow.authenticated()]),
   Reto: a
     .model({
-      areaID: a.string(),
       retoName: a.string(),
       retoDescription: a.string(),
+      areaId: a.id().required(),
       area: a.belongsTo('Area','areaId'),
       evaluations: a.hasMany('RetoHasEvaluation', 'retoId'),
     })
     .authorization((allow) => [allow.authenticated()]),
   RetoHasEvaluation: a
     .model({
-      evaluationId: a.string(),
-      retoId: a.string(),
+      evaluationId: a.id().required(),
+      retoId: a.id().required(),
       reto: a.belongsTo('Reto', 'retoId'),
       evaluation: a.belongsTo('Evaluation', 'evaluationId'),
     })

@@ -15,9 +15,9 @@
 
   <div id="container">
 
-    <!-- <h1>Hello {{user?.signInDetails?.loginId}}'s todos</h1> -->
+    <h1>Hello {{ signInDetails.loginId }}</h1>
 
-<!-- Area -->
+    <!-- Area -->
     <ion-grid>
       <ion-row>
         <ion-col size="6">
@@ -32,9 +32,9 @@
           </ion-list>
         </ion-col>
 
-<!-- Retos -->
+        <!-- Retos -->
         <ion-col size="6">
-          <h1>Retos</h1>  
+          <h1>Retos</h1>
           <ion-item>
             <ion-label>Name: </ion-label>
             <ion-input [(ngModel)]="retoName"></ion-input>

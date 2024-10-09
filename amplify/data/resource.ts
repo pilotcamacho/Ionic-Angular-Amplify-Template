@@ -8,7 +8,7 @@ const schema = a.schema({
       areaName: a.string(),
       retos: a.hasMany('Reto', 'areaId')
     })
-    .authorization((allow) => [allow.authenticated()]),
+    .authorization((allow) => [allow.group('Admin'), allow.owner(), allow.authenticated().to(['read'])]),
   Reto: a
     .model({
       retoName: a.string(),
@@ -17,7 +17,7 @@ const schema = a.schema({
       area: a.belongsTo('Area','areaId'),
       evaluations: a.hasMany('RetoHasEvaluation', 'retoId'),
     })
-    .authorization((allow) => [allow.authenticated()]),
+    .authorization((allow) => [allow.group('Admin'), allow.owner(), allow.authenticated().to(['read'])]),
   RetoHasEvaluation: a
     .model({
       evaluationId: a.id().required(),
@@ -25,7 +25,7 @@ const schema = a.schema({
       reto: a.belongsTo('Reto', 'retoId'),
       evaluation: a.belongsTo('Evaluation', 'evaluationId'),
     })
-    .authorization((allow) => [allow.authenticated()]),
+    .authorization((allow) => [allow.group('Admin'), allow.owner(), allow.authenticated().to(['read'])]),
   Evaluation: a
     .model({
       evaluationQuestionClassName: a.string(),
@@ -36,55 +36,60 @@ const schema = a.schema({
     .authorization((allow) => [allow.authenticated()]),
   Progress: a
     .model({
-      usuarioId: a.id(),
-      evaluationId: a.id(),
-      dateLastUpdateLOC: a.date(),
-      didPass: a.boolean(),
-      maxTimeNextEvaluationSec: a.integer(),
-      msToRespondFirstOfTheDay: a.integer(),
-      r: a.float(),
-      scoreFirstOfTheDay: a.float(),
-      markedAsKnown: a.boolean()
+      usuarioId: a.id().required(),
+      evaluationId: a.id().required(),
+      dateLastUpdateLOC: a.date().required(),
+      didPass: a.boolean().required(),
+      maxTimeNextEvaluationSec: a.integer().required(),
+      msToRespondFirstOfTheDay: a.integer().required(),
+      r: a.float().required(),
+      scoreFirstOfTheDay: a.float().required(),
+      markedAsKnown: a.boolean().default(false)
     })
-    .authorization((allow) => [allow.authenticated()]),
+    .authorization((allow) => [allow.group('Admin'), allow.owner()]),
   Racha: a
     .model({
-      firstDate: a.date(),
-      lastDate: a.date(),
-      daysCnt: a.integer()
+      usuarioId: a.id().required(),
+      firstDate: a.date().required(),
+      lastDate: a.date().required(),
+      daysCnt: a.integer().required(),
     })
-    .authorization((allow) => [allow.authenticated()]),
+    .authorization((allow) => [allow.group('Admin'), allow.owner()]),
   Response: a
     .model({
-      usuarioId: a.id(),
-      evaluationId: a.id(),
+      usuarioId: a.id().required(),
+      evaluationId: a.id().required(),
       agent: a.string(),
       keyStrokes: a.string(),
-      msToRespond: a.integer(),
+      msToRespond: a.integer().required(),
       numStops: a.integer(),
       questionAsTxt: a.string(),
       answerAsTxt: a.string(),
       responseAsTxt: a.string(),
-      score: a.float(),
-      didPass: a.boolean()
+      score: a.float().required(),
+      didPass: a.boolean().required()
     })
-    .authorization((allow) => [allow.authenticated()]),
+    .authorization((allow) => [allow.group('Admin'), allow.owner()]),
   RetoTest: a
     .model({
-      usuarioId: a.id(),
-      retoId: a.id(),
-      dateOfTest: a.date(),
+      usuarioId: a.id().required(),
+      retoId: a.id().required(),
+      dateOfTest: a.date().required(),
+      testEvaluationsTest: a.id().array(), // List of Evaluations that are goining to be aske for the first time.
+      testEvaluationsRehearse: a.id().array(),  // List of Evaluations that student needs to rehearse.
     })
-    .authorization((allow) => [allow.authenticated()]),
+    .identifier(['usuarioId', 'retoId', 'dateOfTest'])
+    .authorization((allow) => [allow.group('Admin'), allow.owner()]),
   UsuarioHasReto: a
     .model({
-      usuarioId: a.id(),
-      retoId: a.id(),
+      usuarioId: a.id().required(),
+      retoId: a.id().required(),
       progress: a.float(),
       maxNewPerDay: a.integer(),
       maxEvalPerDay: a.integer()      
     })
-    .authorization((allow) => [allow.authenticated()]),
+    .identifier(['usuarioId', 'retoId'])
+    .authorization((allow) => [allow.group('Admin'), allow.owner()]),
   });
 
 export type Schema = ClientSchema<typeof schema>;

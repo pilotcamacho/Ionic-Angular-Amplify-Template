@@ -3,8 +3,9 @@ import { Component, OnInit } from '@angular/core';
 import { IonHeader, IonToolbar, IonTitle, IonContent, IonButton, IonLabel, IonList, IonItem, IonGrid, IonRow, IonCol, IonInput, IonSelectOption } from '@ionic/angular/standalone';
 
 import { generateClient } from 'aws-amplify/data';
+import { getCurrentUser, signOut } from 'aws-amplify/auth'
 import type { Schema } from '../../../amplify/data/resource';
-import { IonicModule } from '@ionic/angular'; // Import IonicModule
+// import { IonicModule } from '@ionic/angular'; // Import IonicModule
 import { FormsModule } from '@angular/forms';
 
 const client = generateClient<Schema>();
@@ -19,11 +20,26 @@ const client = generateClient<Schema>();
     CommonModule, FormsModule, IonSelectOption],
 })
 export class HomePage implements OnInit {
-  constructor() { }
+  username!: any;
+  userId!: any;
+  signInDetails!: any;
 
-  signOut() {
-    console.log('signOut')
+  constructor() { 
+    getCurrentUser().then((user) => {
+      this.username = user.username;
+      this.userId = user.userId;
+      this.signInDetails = user.signInDetails;
+    });
   }
+
+
+  
+  //  = ;
+// 
+  // console.log("username", username);
+  // console.log("user id", userId);
+  // console.log("sign-in details", signInDetails);
+
 
   areas: any[] = [];
   retos: any[] = [];
@@ -85,8 +101,8 @@ export class HomePage implements OnInit {
       client.models.Reto.create({
         retoName: this.retoName,
         retoDescription: this.retoDescription,
-        areaId: this.areas[0].id,
-      });
+        areaId: this.selectedArea,
+      }).then(v => console.log(v)).catch((err) => console.log(err))
       this.listRetos();
     } catch (error) {
       console.error('error creating todos', error);
@@ -94,14 +110,20 @@ export class HomePage implements OnInit {
   }
 
   deleteReto(id: string) {
-    client.models.Reto.delete({ id })
+    client.models.Reto.delete({ id }).then(x => console.log(x))
   }
 
 
   onSelectChange(event: any) {
-    console.log('Selected fruit:', event.detail.value);
+    console.log('onSelectChange:', event.detail.value);
+    this.selectedArea = event.detail.value.id;
+    console.log('selectedArea:', this.selectedArea);
   }
 
 
+  signOut() {
+    console.log('about to signOut ....')
+    signOut().then(() => console.log('signed out!'));
+  }
 
 }

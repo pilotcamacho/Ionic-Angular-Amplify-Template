@@ -33,7 +33,58 @@ const schema = a.schema({
       evaluationMsResponseTimeGoal: a.integer(),
       retos: a.hasMany('RetoHasEvaluation', 'evaluationId')
     })
-    .authorization((allow) => [allow.authenticated()])
+    .authorization((allow) => [allow.authenticated()]),
+  Progress: a
+    .model({
+      usuarioId: a.id(),
+      evaluationId: a.id(),
+      dateLastUpdateLOC: a.date(),
+      didPass: a.boolean(),
+      maxTimeNextEvaluationSec: a.integer(),
+      msToRespondFirstOfTheDay: a.integer(),
+      r: a.float(),
+      scoreFirstOfTheDay: a.float(),
+      markedAsKnown: a.boolean()
+    })
+    .authorization((allow) => [allow.authenticated()]),
+  Racha: a
+    .model({
+      firstDate: a.date(),
+      lastDate: a.date(),
+      daysCnt: a.integer()
+    })
+    .authorization((allow) => [allow.authenticated()]),
+  Response: a
+    .model({
+      usuarioId: a.id(),
+      evaluationId: a.id(),
+      agent: a.string(),
+      keyStrokes: a.string(),
+      msToRespond: a.integer(),
+      numStops: a.integer(),
+      questionAsTxt: a.string(),
+      answerAsTxt: a.string(),
+      responseAsTxt: a.string(),
+      score: a.float(),
+      didPass: a.boolean()
+    })
+    .authorization((allow) => [allow.authenticated()]),
+  RetoTest: a
+    .model({
+      usuarioId: a.id(),
+      retoId: a.id(),
+      dateOfTest: a.date(),
+    })
+    .authorization((allow) => [allow.authenticated()]),
+  UsuarioHasReto: a
+    .model({
+      usuarioId: a.id(),
+      retoId: a.id(),
+      progress: a.float(),
+      maxNewPerDay: a.integer(),
+      maxEvalPerDay: a.integer()      
+    })
+    .authorization((allow) => [allow.authenticated()]),
   });
 
 export type Schema = ClientSchema<typeof schema>;
